@@ -1,0 +1,17 @@
+# секреты
+.env
+
+# Python / venv
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Django
+*.log
+db.sqlite3
+
+# редактор / ОС
+.idea/
+.vscode/
+.DS_Store
