@@ -19,10 +19,13 @@ from django.urls import path, include
 from config.views import serve_index, serve_config
 from django.conf.urls.static import static
 from django.conf import settings
+from users.views import CurrentUserView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls')),
+    path('api/user/me', CurrentUserView.as_view(), name='current_user'),
+    path('api/', include('files.urls')),
     path('config.js', serve_config, name='config'),
 ]
 

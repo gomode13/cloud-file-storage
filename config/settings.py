@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
+    'files.apps.FilesConfig',
     'rest_framework',
 ]
 
@@ -82,7 +83,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB'),
         'USER': os.getenv('POSTGRES_USER'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': '127.0.0.1',
+        'HOST': os.getenv('POSTGRES_HOST', '127.0.0.1'),
         'PORT': '5432',
         'OPTIONS': {
             'client_encoding': 'UTF8',
@@ -133,7 +134,8 @@ AUTH_USER_MODEL = 'users.User'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'users.authentication.CsrfExemptSessionAuthentication',
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'config.exceptions.custom_exception_handler',
 }
 
 # Sessions
@@ -141,9 +143,15 @@ REST_FRAMEWORK = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'LOCATION': f'redis://{os.getenv("REDIS_HOST", "127.0.0.1")}:6379/1',
     }
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_CACHE_ALIAS = 'default'
+
+# MinIO / S3
+
+AWS_ACCESS_KEY_ID = os.getenv('MINIO_ROOT_USER')
+AWS_SECRET_ACCESS_KEY = os.getenv('MINIO_ROOT_PASSWORD')
+AWS_S3_ENDPOINT_URL = f'http://{os.getenv("MINIO_HOST", "127.0.0.1")}:9000'

@@ -6,14 +6,13 @@ from users.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import RegexValidator
 
+USERNAME_VALIDATOR = RegexValidator(regex=r"^[a-zA-Z0-9]+[a-zA-Z_0-9]*[a-zA-Z0-9]+$", message='Логин содержит недопустимые символы')
+PASSWORD_VALIDATOR = RegexValidator(regex=r"^[a-zA-Z0-9!@#$%^&*(),.?\":{}|<>[\]/`~+=-_';]*$", message='Пароль содержит недопустимые символы')
+
 
 class SignUpSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(min_length=5, max_length=20, validators=[
-        RegexValidator(regex=r"^[a-zA-Z0-9]+[a-zA-Z_0-9]*[a-zA-Z0-9]+$",
-                       message='Логин содержит недопустимые символы'), UniqueValidator(queryset=User.objects.all())])
-    password = serializers.CharField(write_only=True, min_length=8, max_length=20, validators=[
-        RegexValidator(regex=r"^[a-zA-Z0-9!@#$%^&*(),.?\":{}|<>[\]/`~+=-_';]*$",
-                       message='Пароль содержит недопустимые символы')])
+    username = serializers.CharField(min_length=5, max_length=20, validators=[USERNAME_VALIDATOR, UniqueValidator(queryset=User.objects.all())])
+    password = serializers.CharField(write_only=True, min_length=8, max_length=20, validators=[PASSWORD_VALIDATOR])
 
     class Meta:
         model = User
@@ -33,9 +32,5 @@ class SignUpSerializer(serializers.ModelSerializer):
 
 
 class SignInSerializer(serializers.Serializer):
-    username = serializers.CharField(min_length=5, max_length=20, validators=[
-        RegexValidator(regex=r"^[a-zA-Z0-9]+[a-zA-Z_0-9]*[a-zA-Z0-9]+$",
-                       message='Логин содержит недопустимые символы')])
-    password = serializers.CharField(min_length=8, max_length=20, validators=[
-        RegexValidator(regex=r"^[a-zA-Z0-9!@#$%^&*(),.?\":{}|<>[\]/`~+=-_';]*$",
-                       message='Пароль содержит недопустимые символы')])
+    username = serializers.CharField(min_length=5, max_length=20, validators=[USERNAME_VALIDATOR])
+    password = serializers.CharField(min_length=8, max_length=20, validators=[PASSWORD_VALIDATOR])
